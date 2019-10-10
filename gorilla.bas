@@ -47,6 +47,7 @@ DECLARE FUNCTION ExplodeGorilla (x#, y#)
 DECLARE FUNCTION Getn# (Row, Col)
 DECLARE FUNCTION PlotShot (StartX, StartY, Angle#, Velocity, PlayerNum)
 DECLARE FUNCTION CalcDelay! ()
+DECLARE FUNCTION SelectGameMode$ ()
 
 'Make all arrays Dynamic
 '$DYNAMIC
@@ -102,6 +103,8 @@ DIM SHARED SunHt
 DIM SHARED GHeight
 DIM SHARED MachSpeed AS SINGLE
 
+DIM SHARED GameMode$
+
   DEF FnRan (x) = INT(RND(1) * x) + 1
   DEF SEG = 0                         ' Set NumLock to ON
   KeyFlags = PEEK(1047)
@@ -112,9 +115,18 @@ DIM SHARED MachSpeed AS SINGLE
 
   GOSUB InitVars
   Intro
-  GetInputs Name1$, Name2$, NumGames
-  GorillaIntro Name1$, Name2$
-  PlayGame Name1$, Name2$, NumGames
+  COLOR 7
+  GameMode$ = SelectGameMode$
+  IF GameMode$ = "T" THEN
+    PlayGame "Player 1", "Player 2", 5
+  ELSE
+    CLS
+    Center 5, "puto"
+    Rest 1
+    GetInputs Name1$, Name2$, NumGames
+    GorillaIntro Name1$, Name2$
+    PlayGame Name1$, Name2$, NumGames
+  END IF
  
   DEF SEG = 0                         ' Restore NumLock state
   POKE 1047, KeyFlags
@@ -655,6 +667,19 @@ SUB GorillaIntro (Player1$, Player2$)
     NEXT
   END IF
 END SUB
+
+FUNCTION SelectGameMode$ ()
+  CLS
+  LOCATE 6, 30: PRINT "T = Tournament mode"
+  LOCATE 7, 32: PRINT "C = Classic mode"
+  Center 8, "Your Choice?"
+
+  DO
+    Char$ = INKEY$
+  LOOP UNTIL UCASE$(Char$) = "C" OR UCASE$(Char$) = "T"
+
+  SelectGameMode$ = UCASE$(Char$)
+END FUNCTION
 
 'Intro:
 '  Displays game introduction
