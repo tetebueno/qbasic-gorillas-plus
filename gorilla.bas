@@ -670,7 +670,6 @@ END SUB
 
 FUNCTION SelectGameMode$ ()
   CLS
-  LOCATE 5, 27: PRINT "Choose game mode, please:"
   LOCATE 6, 30: PRINT "T = Tournament mode"
   LOCATE 7, 32: PRINT "C = Classic mode"
   Center 8, "Your Choice?"
