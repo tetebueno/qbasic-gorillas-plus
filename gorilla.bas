@@ -119,14 +119,21 @@ DIM SHARED GameMode$
   COLOR 7, 0
   GameMode$ = SelectGameMode$
   IF GameMode$ = "T" THEN
-    NumGames = 5
     gravity# = 9.8
     PrepareGame
-    PlayGame "Player 1", "Player 2", NumGames
+    Name1$ = "sudo"
+    Name2$ = "UnitTest"
+    RANDOMIZE (TIMER)
+    IF FnRan(10) < 5 THEN
+      Name1$ = "UnitTest"
+      Name2$ = "sudo"
+    END IF
+    NumGames = 5
+    PlayGame Name1$, Name2$, NumGames
   ELSE
     CLS
-    Center 5, "puto"
-    Rest .5
+    Center 10, "puto de mierda"
+    Rest .2
     GetInputs Name1$, Name2$, NumGames
     GorillaIntro Name1$, Name2$
     PlayGame Name1$, Name2$, NumGames
