@@ -40,7 +40,6 @@ DECLARE SUB Rest (t#)
 DECLARE SUB VictoryDance (Player)
 DECLARE SUB ClearGorillas ()
 DECLARE SUB DrawBan (xc#, yc#, r, bc)
-DECLARE SUB PrepareGame ()
 DECLARE FUNCTION Scl (n!)
 DECLARE FUNCTION GetNum# (Row, Col)
 DECLARE FUNCTION DoShot (PlayerNum, x, y)
@@ -48,7 +47,6 @@ DECLARE FUNCTION ExplodeGorilla (x#, y#)
 DECLARE FUNCTION Getn# (Row, Col)
 DECLARE FUNCTION PlotShot (StartX, StartY, Angle#, Velocity, PlayerNum)
 DECLARE FUNCTION CalcDelay! ()
-DECLARE FUNCTION SelectGameMode$ ()
 
 'Make all arrays Dynamic
 '$DYNAMIC
@@ -104,8 +102,6 @@ DIM SHARED SunHt
 DIM SHARED GHeight
 DIM SHARED MachSpeed AS SINGLE
 
-DIM SHARED GameMode$
-
   DEF FnRan (x) = INT(RND(1) * x) + 1
   DEF SEG = 0                         ' Set NumLock to ON
   KeyFlags = PEEK(1047)
@@ -116,28 +112,9 @@ DIM SHARED GameMode$
 
   GOSUB InitVars
   Intro
-  COLOR 7, 0
-  GameMode$ = SelectGameMode$
-  IF GameMode$ = "T" THEN
-    gravity# = 9.8
-    PrepareGame
-    Name1$ = "sudo"
-    Name2$ = "UnitTest"
-    RANDOMIZE (TIMER)
-    IF FnRan(10) < 5 THEN
-      Name1$ = "UnitTest"
-      Name2$ = "sudo"
-    END IF
-    NumGames = 5
-    PlayGame Name1$, Name2$, NumGames
-  ELSE
-    CLS
-    Center 10, "puto de mierda"
-    Rest .2
-    GetInputs Name1$, Name2$, NumGames
-    GorillaIntro Name1$, Name2$
-    PlayGame Name1$, Name2$, NumGames
-  END IF
+  GetInputs Name1$, Name2$, NumGames
+  GorillaIntro Name1$, Name2$
+  PlayGame Name1$, Name2$, NumGames
  
   DEF SEG = 0                         ' Restore NumLock state
   POKE 1047, KeyFlags
@@ -609,7 +586,32 @@ SUB GorillaIntro (Player1$, Player2$)
     Char$ = INKEY$
   LOOP
 
-  PrepareGame
+  IF Mode = 1 THEN
+    x = 125
+    y = 100
+  ELSE
+    x = 278
+    y = 175
+  END IF
+
+  SCREEN Mode
+  SetScreen
+
+  IF Mode = 1 THEN Center 5, "Please wait while gorillas are drawn."
+
+  VIEW PRINT 9 TO 24
+
+  IF Mode = 9 THEN PALETTE OBJECTCOLOR, BackColor
+ 
+  DrawGorilla x, y, ARMSDOWN
+  CLS 2
+  DrawGorilla x, y, LEFTUP
+  CLS 2
+  DrawGorilla x, y, RIGHTUP
+  CLS 2
+ 
+  VIEW PRINT 1 TO 25
+  IF Mode = 9 THEN PALETTE OBJECTCOLOR, 46
  
   IF UCASE$(Char$) = "V" THEN
     Center 2, "Q B A S I C   G O R I L L A S"
@@ -653,49 +655,6 @@ SUB GorillaIntro (Player1$, Player2$)
     NEXT
   END IF
 END SUB
-
-SUB PrepareGame ()
-  IF Mode = 1 THEN
-    x = 125
-    y = 100
-  ELSE
-    x = 278
-    y = 175
-  END IF
-
-  SCREEN Mode
-  SetScreen
-
-  IF Mode = 1 THEN Center 5, "Please wait while gorillas are drawn."
-
-  VIEW PRINT 9 TO 24
-
-  IF Mode = 9 THEN PALETTE OBJECTCOLOR, BackColor
- 
-  DrawGorilla x, y, ARMSDOWN
-  CLS 2
-  DrawGorilla x, y, LEFTUP
-  CLS 2
-  DrawGorilla x, y, RIGHTUP
-  CLS 2
- 
-  VIEW PRINT 1 TO 25
-  IF Mode = 9 THEN PALETTE OBJECTCOLOR, 46
-END SUB
-
-FUNCTION SelectGameMode$ ()
-  CLS
-  Center 5, "Choose game mode, please:"
-  Center 7, "T = Tournament mode"
-  Center 8, "C = Classic mode"
-  Center 10, "Your Choice?"
-
-  DO
-    Char$ = INKEY$
-  LOOP UNTIL UCASE$(Char$) = "C" OR UCASE$(Char$) = "T"
-
-  SelectGameMode$ = UCASE$(Char$)
-END FUNCTION
 
 'Intro:
 '  Displays game introduction
